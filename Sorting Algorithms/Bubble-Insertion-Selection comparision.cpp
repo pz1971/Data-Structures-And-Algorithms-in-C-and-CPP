@@ -97,13 +97,6 @@ namespace _selection_sort{
 
 }
 
-namespace _merge_sort{
-	LL swapCount = 0, compCount = 0;
-	double timePassed;
-
-	int* merge(int a[], int len1, int b[], int len2)
-}
-
 int main(){
 	
 	int ar[100000], ar1[100000], ar2[100000];

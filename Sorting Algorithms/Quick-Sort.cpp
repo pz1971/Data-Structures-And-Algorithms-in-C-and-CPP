@@ -48,7 +48,7 @@ int main(){
 
     printf("Total time for sorting = %.3lf sec.\n", (double)( clock() - start_time ) / CLOCKS_PER_SEC);
 
-    for(int i=0; i<10000; i++)  printf("%d\n", arr[i]);
+    // for(int i=0; i<10000; i++)  printf("%d\n", arr[i]);
 
     return 0;
 }

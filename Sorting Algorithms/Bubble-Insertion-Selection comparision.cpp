@@ -49,14 +49,19 @@ namespace _insertion_sort{
 			int key = ar[i];
 			
 			int j = i - 1;
-			for( ; j >= 0 && ar[j] > key ; j--){
-				ar[j + 1] = ar[j];
-				
-				compCount++;
-				swapCount++;
-			}
 			
-			ar[j] = key;
+			if(ar[j] > key){
+    			
+    			for( ; j >= 0 && ar[j] > key ; j--){
+    				ar[j + 1] = ar[j];
+    				
+    				compCount++;
+    				swapCount++;
+    			}
+    			
+    			ar[j + 1] = key;
+    			
+			}
 		}
 		
 		timePassed = (double)(clock() - start) / CLOCKS_PER_SEC ;

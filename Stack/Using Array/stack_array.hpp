@@ -9,7 +9,7 @@
 template<typename T>
 class stack_array{
 private:
-    T ar[1000];
+    T ar[10000];
     int cur;
 public:
     stack_array();
@@ -37,6 +37,11 @@ bool stack_array<T>:: empty(){
 
 template<typename T>
 void stack_array<T>:: push(T elem){
+    if(cur + 1 >= 10000){
+        std:: cerr<< "Program terminated:: *this stack required too much memory."<< std:: endl;
+        exit(0);
+    }
+    
     ar[ ++cur ] = elem;
 }
 
@@ -50,14 +55,24 @@ T stack_array<T>:: top(){
         }
     }
     catch(int &ex){
-        std::cerr<< "*this stack is currently empty"<< std:: endl;
+        std::cerr<< "Program terminated:: *this stack is currently empty."<< std:: endl;
+        exit(0);
     }
 }
 
 template<typename T>
 void stack_array<T>:: pop(){
-    if(cur >= 0)
-        cur--;
+    try{
+        if(cur >= 0)
+            cur--;
+        else{
+            throw 0;
+        }
+    }
+    catch(int &ex){
+        std::cerr<< "Program terminated:: *this stack is currently empty."<< std:: endl;
+        exit(0);
+    }
 }
 
 #endif

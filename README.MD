@@ -1,4 +1,4 @@
-**Codes for University Data-Structures Course**
+**Codes for University Data-Structures and Algorithms Courses**
 ---
 - All the codes are written in C/C++ language.
 - Tried to avoid STL of C++.

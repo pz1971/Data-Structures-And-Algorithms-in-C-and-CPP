@@ -2,4 +2,4 @@
 ---
 - All the codes are written in C/C++ language.
 - Tried to avoid STL of C++.
-- Files may be updated later for increasing efficiency.
+- Files may be updated later for increasing efficiency or to add more features.

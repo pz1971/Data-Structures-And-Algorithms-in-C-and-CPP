@@ -1,30 +1,30 @@
-#ifndef LINKED_LIST_HPP
-#define LINKED_LIST_HPP
+#ifndef DOUBLY_doubly_LINKED_LIST_HPP
+#define DOUBLY_doubly_LINKED_LIST_HPP
 
 #include <iostream>
 #include <memory>
 
 template<typename T>
-class linked_list
+class doubly_linked_list
 {
 private:
 	class node{
 	public:
 		T data;		// the actual data to be stored
-		node *next;		// pointer to the next node
+		node *prev, *next;		// pointer to the next node
 	} *head;	// address of the head
 
 	size_t _size ;	// the current size of the list
 
 public:
-	linked_list() ;							// constructor
-	~linked_list() ;						// destructor
+	doubly_linked_list() ;							// constructor
+	~doubly_linked_list() ;						// destructor
 	void clear() ;							// clears the list
 	bool empty() ;							// returns true if empty else false
 	size_t size() ;							// returns the _size, current size of the list
-	void insert_front(T val) ;			// insert val at the beginning
+	void insert_front(T val) ;				// insert val at the beginning
 	void insert_back(T val) ;				// insert val at the end
-	void insert_at(size_t pos, T val) ;	// insert the value at the index pos ( 0 indexed )...
+	void insert_at(size_t pos, T val) ;		// insert the value at the index pos ( 0 indexed )...
 	void erase_front() ;					// erases the element at the front ( right most element )
 	void erase_back() ;						// erases the left most element
 	void erase_at(size_t pos) ;				// erases the element lying at index pos.. if pos is valid
@@ -36,18 +36,18 @@ public:
 };
 
 template<typename T>
-linked_list<T>:: linked_list(){
+doubly_linked_list<T>:: doubly_linked_list(){
 	head = nullptr ;	// list is empty
 	_size = 0;		// so the size is 0;
 }
 
 template<typename T>
-linked_list<T>:: ~linked_list(){
+doubly_linked_list<T>:: ~doubly_linked_list(){
 	clear();		// clears the list... meanwhile, de-allocates all the spaces consumed ;
 }
 
 template<typename T>
-void linked_list<T>:: clear(){
+void doubly_linked_list<T>:: clear(){
 	node *cur ;
 	while(head != nullptr){		// de-allocating all the nodes
 		cur = head ;
@@ -60,28 +60,32 @@ void linked_list<T>:: clear(){
 }
 
 template<typename T>
-bool linked_list<T>:: empty(){
+bool doubly_linked_list<T>:: empty(){
 	return ( _size == 0 ) ;		// empty list has size  0 
 }
 
 template<typename T>
-size_t linked_list<T>:: size(){
+size_t doubly_linked_list<T>:: size(){
 	return _size ;		// returning the size ;
 }
 
 template<typename T>
-void linked_list<T>:: insert_front(T val){
+void doubly_linked_list<T>:: insert_front(T val){
 	node *temp = new node();	// allocating a new node;
 	
 	temp->data = val;	// assigning value to the new node's data
 	temp->next = head;	// current head will sit next to the temp
+	temp->prev = nullptr; // nothing comes before the head
+	
+	if(_size > 0)	// list is not empty
+		head->prev = temp;	// updating the link to the previous node of the current head
 	head = temp;		// temp is the new head! :D
 	
 	_size++;		// size increasd by 1
 }
 
 template<typename T>
-void linked_list<T>:: insert_back(T val){
+void doubly_linked_list<T>:: insert_back(T val){
 	node *temp = new node();	// allocating a new node;
 	temp->data = val ;	// assigning value to the new node's data
 	temp->next = nullptr ;
@@ -97,12 +101,13 @@ void linked_list<T>:: insert_back(T val){
 	}
 
 	cur->next = temp ;	// cur is the new tail :D
+	temp->prev = cur ; // cur is now at the previous position of temp
 	
 	_size++;		// size increasd by 1
 }
 
 template<typename T>
-void linked_list<T>:: insert_at(size_t pos, T val){
+void doubly_linked_list<T>:: insert_at(size_t pos, T val){
 	if(pos == 0) {		// insert at the beginning
 		insert_front(val);
 		return ;
@@ -126,12 +131,13 @@ void linked_list<T>:: insert_at(size_t pos, T val){
 
 	temp-> next = cur-> next ;
 	cur-> next = temp ;		// placing the new node in the list
+	temp-> prev = cur ;
 
 	_size++ ;		// size increased by 1 ;
 }
 
 template<typename T>
-void linked_list<T>:: erase_front(){
+void doubly_linked_list<T>:: erase_front(){
 	if( empty() )		// nothing to erase
 		return ;
 	if(_size == 1){
@@ -141,13 +147,14 @@ void linked_list<T>:: erase_front(){
 
 	node *temp = head ;
 	head = head->next ;	// head is pointing to the second element now...
+	head-> prev = nullptr ;
 	delete temp ;	// delete the first element
 
 	_size--;
 }
 
 template<typename T>
-void linked_list<T>:: erase_back(){
+void doubly_linked_list<T>:: erase_back(){
 	if( empty() )		// nothing to erase
 		return ;
 	if(_size == 1){
@@ -168,7 +175,7 @@ void linked_list<T>:: erase_back(){
 }
 
 template<typename T>
-void linked_list<T>:: erase_at(size_t pos){
+void doubly_linked_list<T>:: erase_at(size_t pos){
 	if(_size == 0)
 		return ;	// nothing to erase;
 	if(pos >= _size){	// invalid index
@@ -190,6 +197,7 @@ void linked_list<T>:: erase_at(size_t pos){
 		}
 
 		temp->next = cur->next ;	// fix links
+		(cur->next)->prev = temp ;
 		delete cur ;	// delete that node ;
 
 		_size--;	// size decreases by 1
@@ -197,7 +205,7 @@ void linked_list<T>:: erase_at(size_t pos){
 }
 
 template<typename T>
-T linked_list<T>:: front(){
+T doubly_linked_list<T>:: front(){
 	try{
 		if(head == nullptr){	// list is empty
 			throw 0;	// throws exception
@@ -213,7 +221,7 @@ T linked_list<T>:: front(){
 }
 
 template<typename T>
-T linked_list<T>:: back(){
+T doubly_linked_list<T>:: back(){
 	try{
 		if(head == nullptr){	// list is empty
 			throw 0;	// throws exception
@@ -234,7 +242,7 @@ T linked_list<T>:: back(){
 }
 
 template<typename T>
-T linked_list<T>:: at(size_t pos){
+T doubly_linked_list<T>:: at(size_t pos){
 	if(pos >= _size){
 		std:: cerr << "Error: index out of bound..." << std:: endl ; // error message
 		exit( 0 ) ; // program terminates
@@ -249,12 +257,12 @@ T linked_list<T>:: at(size_t pos){
 }
 
 template<typename T>
-T linked_list<T>:: operator [] (size_t pos){
+T doubly_linked_list<T>:: operator [] (size_t pos){
 	return at(pos) ;	// return the data at pos index
 }
 
 template<typename T>
-void linked_list<T>:: print_list(){
+void doubly_linked_list<T>:: print_list(){
 	node *cur = head;
 
 	while(cur != nullptr){		// print every data from the head till the end(nullptr)

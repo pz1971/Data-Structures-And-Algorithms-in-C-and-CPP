@@ -86,14 +86,14 @@ void doubly_linked_list<T>:: insert_front(T val){
 
 template<typename T>
 void doubly_linked_list<T>:: insert_back(T val){
-	node *temp = new node();	// allocating a new node;
-	temp->data = val ;	// assigning value to the new node's data
-	temp->next = nullptr ;
-	
 	if(head == nullptr){	// the list is empty 
 		insert_front(val) ;		// it's the same inserting at the beginning or at the end of an empty list 
 		return ;
 	}
+	
+	node *temp = new node();	// allocating a new node;
+	temp->data = val ;	// assigning value to the new node's data
+	temp->next = nullptr ;
 
 	node *cur = head;
 	while(cur->next != nullptr){	// iterate till cur is not the last node

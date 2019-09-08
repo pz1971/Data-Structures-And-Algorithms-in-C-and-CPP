@@ -12,7 +12,7 @@ private:
 	public:
 		T data;		// the actual data to be stored
 		node *next;		// pointer to the next node
-	} *head;	// address of the head
+	} *head, *tail;	// address of the head and tail
 
 	size_t _size ;	// the current size of the list
 
@@ -29,7 +29,7 @@ public:
 
 template<typename T>
 queue_list<T>:: queue_list(){
-	head = nullptr ;	// queue is empty
+	head = tail = nullptr ;	// queue is empty
 	_size = 0;		// so the size is 0;
 }
 
@@ -68,18 +68,13 @@ void queue_list<T>:: push(T val){
 	temp->next = nullptr ;
 	
 	if(head == nullptr){	// the list is empty 
-		head = temp ;
-		_size++;
-		return ;
+		head = tail = temp ;
+	}
+	else{
+		tail->next = temp ;		// pushing to the end
+		tail = temp ;			// temp is the new tail :D
 	}
 
-	node *cur = head;
-	while(cur->next != nullptr){	// iterate till cur is not the last node
-		cur = cur->next ;
-	}
-
-	cur->next = temp ;	// cur is the new tail :D
-	
 	_size++;		// size increasd by 1
 }
 

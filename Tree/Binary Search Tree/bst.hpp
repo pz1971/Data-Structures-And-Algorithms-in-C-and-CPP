@@ -20,12 +20,12 @@ public:
 
 template<typename T>
 node<T>:: node(){
-	left = right = parent = nullptr ;
+	left = right = nullptr ;
 }
 
 template<typename T>
 node<T>:: node(T val){
-	left = right = parent = nullptr ;
+	left = right = nullptr ;
 	data = val ;
 }
 // end of data container
@@ -34,22 +34,24 @@ node<T>:: node(T val){
 template<typename T>
 class bst{
 private:
-	size_t _size ;				// number of elements in the tree 
-	node<T>* inorder_successor(T val) ;			// returns the address to the inorder successor of the given node
+	size_t _size ;							// number of elements in the tree 
+	node<T>* inorder_successor(T val) ;		// returns the address to the inorder successor of the given node
+	void clear(node<T> *cur);				// clears the sub-tree rooted from parameter
 
 public:
-	node<T> *root ;				// address to the root
-	bst() ;						// constructor
-	~bst() ;					// destructor
-	void clear(node<T> *cur);	// clears a sub-tree starting from the node given in parameter... by default - clears all
-	size_t size() ;				// returns the size
-	bool empty();				// returns if empty or not
-	void insert(T elem) ;		// inserts an element in the tree
+	node<T> *root ;							// address to the root
+	bst() ;									// constructor
+	~bst() ;								// destructor
+	void clear();							// clears the full tree
+	size_t size() ;							// returns the size
+	bool empty();							// returns if empty or not
+	void insert(T elem) ;					// inserts an element in the tree
 	void insert(T *array, size_t len) ;		// inserts an array of elements in the tree one by one
-	bool search(T elem) ;		// returns true if the element is situated in the tree
-	node<T>* find(T elem) ;		// returns the pointer to the element in the tree
-	void erase(T elem) ;		// removes the element
-	void print(node<T> *cur) ;	// inorder sub-tree
+	bool search(T elem) ;					// returns true if the element is situated in the tree
+	node<T>* find(T elem) ;					// returns the pointer to the element in the tree
+	node<T>* erase(node<T>* n, T elem);		// removes the node
+	void erase(T elem) ;					// removes the element
+	void print(node<T> *cur) ;				// inorder sub-tree
 };
 
 template<typename T>
@@ -64,21 +66,18 @@ bst<T>:: ~bst(){
 }
 
 template<typename T>
+void bst<T>:: clear(){
+	clear(root) ;
+}
+
+template<typename T>
 void bst<T>:: clear(node<T> *cur ){
-	if(cur == nullptr)	return ;
-	
-	if(cur->left != nullptr)	// if left sub-tree exists
-		clear(cur-> left) ;		// deletes left sub-tree
-	if(cur->right != nullptr)	// if right sub-tree exists
-		clear(cur->right) ;		// deletes right sub-tree
-	if(cur->parent != nullptr){
-		if(cur->parent->left == cur)
-			cur->parent->left = nullptr ;
-		else 
-			cur->parent->right = nullptr ;
-	}
-	delete cur ;				// deletes current node
-	_size-- ;					// one node has been removed
+	if(cur == nullptr)
+		return ;
+	clear(cur->left) ;	// delete left sub-tree
+	clear(cur->right) ;	// delete right sub-tree
+	delete cur ;		// delete root
+	_size-- ;
 }
 
 template<typename T>
@@ -114,7 +113,6 @@ void bst<T>:: insert(T elem){
 		par-> left = n ;		// new node sits in the left
 	else 
 		par-> right = n ;		//	"  "  "  "	right
-	n->parent = par ;			// setting up new nodes parent
 
 	_size++ ;					// one new node inserted
 }
@@ -186,86 +184,56 @@ node<T>* bst<T>:: inorder_successor(T val){
 }
 
 template<typename T>
+node<T>* bst<T>:: erase(node<T> *n, T key){
+	if(n == nullptr)			// key not found
+		return nullptr ;
+
+	if(key < n-> data)						// key can be found in left
+		n-> left = erase(n-> left, key) ;
+	else if(key > n-> data)					// key can be found in right
+		n-> right = erase(n-> right, key) ;
+	else{									// found here
+		if(n-> left == nullptr && n-> right == nullptr){	//	no child
+			if(n == root)
+				root = nullptr ;
+			delete n ;
+			_size-- ;
+			return nullptr ;
+		}
+		else if(n-> left != nullptr && n-> right == nullptr){	// one child(left)
+			node<T> *ret = n->left ;
+			delete n ;
+			_size-- ;
+			return ret ;
+		}
+		else if(n-> left == nullptr && n-> right != nullptr){	// one child(right)
+			node<T> *ret = n->right ;
+			delete n ;
+			_size-- ;
+			return ret ;
+		}
+		else{		// no child
+			node<T> *s = inorder_successor(key) ;		// replace with the inorder successor then recursively earase the previous position of that inorder successor
+			T key2 = s-> data ;
+			s = erase(root, s-> data) ;
+			n-> data = key2 ;
+			return n ;
+		}
+	}
+}
+
+template<typename T>
 void bst<T>:: erase(T elem){
-	node<T> *n = find(elem) ;
-	if(n == nullptr)	// not in the tree
-		return ;
-	_size-- ;
-
-	node<T> *par ;
-	if(n != root)
-		par = n-> parent ;
-	else par = nullptr ;
-
-
-	if(n-> left == nullptr && n-> right == nullptr){	// no child
-		if(par != nullptr){
-			if(par->left == n)
-				par-> left = nullptr ;
-			else 
-				par-> right = nullptr ;
-		}
-		delete n ;
-	}
-
-	else if(n-> left != nullptr && n-> right == nullptr){	// one child (left)
-		if(par == nullptr){
-			root = n-> left ;
-			delete n ;
-		}
-		else{
-			if(par->left == n){
-				par-> left = n-> left ;
-				n->left->parent = par ;
-			}
-			else{
-				par-> right = n-> left ;
-				n->left->parent = par ;
-			}
-			delete n ;
-		}
-	}
-
-	
-	else if(n-> left == nullptr && n-> right != nullptr){	// one child (right)
-		if(par == nullptr){
-			root = n-> right ;
-			delete n ;
-		}
-		else{
-			if(par->left == n){
-				par-> left = n-> right ;
-				n->right->parent = par ;
-			}
-			else{
-				par-> right = n-> right ;
-				n->right->parent = par ;
-			}
-			delete n ;
-		}
-	}
-
-	else{	// two child
-		// find inorder successor node
-		node<T>* s = inorder_successor(elem) ;
-		//	swap it with n
-		n->data = s->data ;
-		// delete n
-		if(s->parent->left == s)
-			s->parent->left = nullptr ;
-		else 
-			s->parent->right = nullptr ;
-		delete s ;	// why deleting s? cause, s is the new n after swaping... we didn't swap their address..right?
-	}
+	root = erase(root, elem) ;
 }
 
 template<typename T>
 void bst<T>:: print(node<T>* cur ){
 	if(cur == nullptr)	return ;
 	
-	print(cur->left) ;
-	std:: cout << cur-> data << " " ;
-	print(cur-> right);
+	print(cur->left) ;						// process left sub-tree
+	std:: cout << cur-> data << " " ;		// process the root
+	print(cur-> right);						// process right sub-tree
 }
 
 #endif

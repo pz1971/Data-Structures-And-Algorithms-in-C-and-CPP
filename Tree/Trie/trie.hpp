@@ -144,8 +144,7 @@ bool trie:: search(const string &str){
 void trie:: print(node *cur, string &str , const char token){
 	if(cur -> completeCount > 0){
 		for(int i = 0 ; i < cur->completeCount ; i++)
-			cout << str ;
-		cout << token ;
+			cout << str << token ;
 	}
 
 	for(int i = 0 ; i < ALPHABET_SIZE ; i++)

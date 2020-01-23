@@ -5,7 +5,7 @@
 #include <string>
 using namespace std ;
 
-const int ALPHABET_SIZE = 26 ;
+const int ALPHABET_SIZE = 128 ;
 
 class trie{
 private:
@@ -72,10 +72,10 @@ void trie:: insert(const string &str){
 	cur -> childCount++ ;
 	
 	for(const auto &ch : str){
-		if(cur -> child[ch - 'a'] == nullptr)
-			cur -> child[ch - 'a'] = new node() ;
+		if(cur -> child[ch] == nullptr)
+			cur -> child[ch] = new node() ;
 
-		cur = cur -> child[ch - 'a'] ;
+		cur = cur -> child[ch] ;
 		cur -> childCount++ ;
 	}
 	cur -> completeCount++ ;
@@ -88,7 +88,7 @@ void trie:: remove(const string &str){
 	node *cur = root ;
 	for(const auto &i : str){
 		cur -> childCount-- ;
-		cur = cur -> child[i - 'a'] ;
+		cur = cur -> child[i] ;
 	}
 	cur -> childCount-- ;
 	cur -> completeCount-- ;
@@ -96,7 +96,7 @@ void trie:: remove(const string &str){
 	cur = root ;
 	for(const auto &i : str){
 		if(cur -> childCount == 0){
-			clear(cur -> child[i - 'a']) ;
+			clear(cur -> child[i]) ;
 			break ;
 		}
 	}
@@ -106,9 +106,9 @@ int trie:: count(const string &str){
 	node *cur = root ;
 
 	for(const auto &ch : str){
-		if(cur -> child[ch - 'a'] == nullptr)
+		if(cur -> child[ch] == nullptr)
 			return 0 ;
-		cur = cur -> child[ch - 'a'] ;
+		cur = cur -> child[ch] ;
 	}
 	return cur -> completeCount ;
 }
@@ -117,9 +117,9 @@ int trie:: suffixCount(const string &str){
 	node *cur = root ;
 
 	for(const auto &ch : str){
-		if(cur -> child[ch - 'a'] == nullptr)
+		if(cur -> child[ch] == nullptr)
 			return 0 ;
-		cur = cur -> child[ch - 'a'] ;
+		cur = cur -> child[ch] ;
 	}
 	return cur -> childCount ;
 }
@@ -129,9 +129,9 @@ int trie:: prefixCount(const string &str){
 	int ret = 0 ;
 
 	for(const auto &ch : str){
-		if(cur -> child[ch - 'a'] == nullptr)
+		if(cur -> child[ch] == nullptr)
 			break ;
-		cur = cur -> child[ch - 'a'] ;
+		cur = cur -> child[ch] ;
 		ret += cur -> completeCount ;
 	}
 	return ret ;
@@ -149,7 +149,7 @@ void trie:: print(node *cur, string &str , const char token){
 
 	for(int i = 0 ; i < ALPHABET_SIZE ; i++)
 		if(cur -> child[i] != nullptr){
-			str.push_back(i + 'a') ;
+			str.push_back(i) ;
 			print(cur -> child[i], str, token) ;
 			str.pop_back() ;
 		}
